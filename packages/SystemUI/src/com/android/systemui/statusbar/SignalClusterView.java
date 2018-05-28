@@ -65,6 +65,9 @@ import static android.telephony.TelephonyManager.PHONE_TYPE_GSM;
 import static com.android.internal.telephony.PhoneConstants.LTE_ON_CDMA_TRUE;
 import static com.android.internal.telephony.PhoneConstants.LTE_ON_CDMA_UNKNOWN;
 
+import org.lineageos.internal.util.TelephonyExtUtils;
+import org.lineageos.internal.util.TelephonyExtUtils.ProvisioningChangedListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +75,7 @@ import java.util.Objects;
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
 public class SignalClusterView extends LinearLayout implements NetworkControllerImpl.SignalCallback,
         SecurityController.SecurityControllerCallback, Tunable,
-        DarkReceiver {
+        DarkReceiver, ProvisioningChangedListener {
 
     static final String TAG = "SignalClusterView";
     static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
@@ -180,8 +183,25 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         mSecurityController = Dependency.get(SecurityController.class);
         mTelephony = mContext.getSystemService(TelephonyManager.class);
 
+        TelephonyExtUtils.getInstance(context).addListener(this);
+
         if (mTelephony != null) {
             mSubscriptionManager = SubscriptionManager.from(mContext);
+        }
+    }
+
+    @Override
+    public void onProvisioningChanged(int slotId, boolean isProvisioned) {
+        int[] subId = SubscriptionManager.getSubId(slotId);
+        if (subId != null) {
+            PhoneState state = getState(subId[0]);
+            if (state != null) {
+                state.mProvisioned = isProvisioned;
+                if (!isProvisioned) {
+                    state.mMobileVisible = false;
+                }
+            }
+            apply();
         }
     }
 
@@ -386,7 +406,7 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         final int simState = SubscriptionManager.getSimStateForSlotIndex(slotId);
         final boolean mIsRequired = isNosimRequired() && simState == TelephonyManager.SIM_STATE_NOT_READY;
         state.mMobileVisible = statusIcon.visible && !mBlockMobile &&
-              !mIsRequired;
+              !mIsRequired && state.mProvisioned;
         state.mMobileStrengthId = statusIcon.icon;
         state.mMobileTypeId = statusType;
         state.mMobileDescription = statusIcon.contentDescription;
@@ -768,6 +788,7 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     private class PhoneState {
         private final int mSubId;
         private boolean mMobileVisible = false;
+        private boolean mProvisioned = true;
         private int mMobileStrengthId = 0, mMobileTypeId = 0;
         private int mLastMobileStrengthId = -1;
         private int mLastMobileTypeId = -1;
@@ -787,6 +808,11 @@ public class SignalClusterView extends LinearLayout implements NetworkController
                     .inflate(R.layout.mobile_signal_group, null);
             setViews(root);
             mSubId = subId;
+
+            TelephonyExtUtils extTelephony = TelephonyExtUtils.getInstance(context);
+            if (extTelephony.hasService()) {
+                mProvisioned = extTelephony.isSubProvisioned(subId);
+            }
         }
 
         public void setViews(ViewGroup root) {
