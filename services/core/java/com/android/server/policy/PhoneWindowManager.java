@@ -770,6 +770,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // Pie
     boolean mPieState;
 
+    private boolean mSplitscreenForceShowSystemBars;
+
     boolean mShowingDream;
     private boolean mLastShowingDream;
     boolean mDreamingLockscreen;
@@ -1232,6 +1234,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENTS_OMNI_SWITCH_ENABLED), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SPLITSCREEN_FORCE_SYSTEMBAR_ENABLED), false, this,
                     UserHandle.USER_ALL);
             updateSettings();
         }
@@ -2963,6 +2968,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mOmniSwitchRecents = Settings.System.getIntForUser(resolver,
                     Settings.System.RECENTS_OMNI_SWITCH_ENABLED, 0,
                     UserHandle.USER_CURRENT) == 1;
+            mSplitscreenForceShowSystemBars = Settings.System.getIntForUser(resolver,
+                    Settings.System.SPLITSCREEN_FORCE_SYSTEMBAR_ENABLED, 1,
+                    UserHandle.USER_CURRENT) != 0;
         }
 
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {
@@ -6457,6 +6465,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
             } else if (mTopFullscreenOpaqueWindowState != null) {
                 topIsFullscreen = topAppHidesStatusBar;
+                final boolean forceShowSystemBars = mSplitscreenForceShowSystemBars &&
+                        (mWindowManagerInternal.isStackVisible(DOCKED_STACK_ID) ||
+                        mWindowManagerInternal.isStackVisible(FREEFORM_WORKSPACE_STACK_ID));
                 // The subtle difference between the window for mTopFullscreenOpaqueWindowState
                 // and mTopIsFullscreen is that mTopIsFullscreen is set only if the window
                 // has the FLAG_FULLSCREEN set.  Not sure if there is another way that to be the
@@ -6465,9 +6476,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     if (mStatusBarController.setBarShowingLw(true)) {
                         changes |= FINISH_LAYOUT_REDO_LAYOUT;
                     }
-                } else if (topIsFullscreen
-                        && !mWindowManagerInternal.isStackVisible(FREEFORM_WORKSPACE_STACK_ID)
-                        && !mWindowManagerInternal.isStackVisible(DOCKED_STACK_ID)) {
+                } else if (topIsFullscreen && !forceShowSystemBars) {
                     if (DEBUG_LAYOUT) Slog.v(TAG, "** HIDING status bar");
                     if (mStatusBarController.setBarShowingLw(false)) {
                         changes |= FINISH_LAYOUT_REDO_LAYOUT;
@@ -9346,7 +9355,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // We need to force system bars when the docked stack is visible, when the freeform stack
         // is visible but also when we are resizing for the transitions when docked stack
         // visibility changes.
-        mForceShowSystemBars = dockedStackVisible || freeformStackVisible || resizing;
+        mForceShowSystemBars = mSplitscreenForceShowSystemBars && (dockedStackVisible || freeformStackVisible || resizing);
         final boolean forceOpaqueStatusBar = mForceShowSystemBars && !mForceStatusBarFromKeyguard;
 
         // apply translucent bar vis flags

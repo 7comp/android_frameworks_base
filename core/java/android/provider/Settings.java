@@ -5932,6 +5932,12 @@ public final class Settings {
          */
         public static final String RECENTS_OMNI_SWITCH_ENABLED = "recents_omni_switch";
 
+        /**
+         * @hide
+         */
+        public static final String SPLITSCREEN_FORCE_SYSTEMBAR_ENABLED =
+                "splitscreen_force_systembar_enabled";
+
        /**
          * Whether to show or hide the edit icon
          * @hide
@@ -6126,6 +6132,7 @@ public final class Settings {
 			PRIVATE_SETTINGS.add(HEADS_UP_NOTIFICATION_SNOOZE);
 			PRIVATE_SETTINGS.add(HEADS_UP_TIMEOUT);
             PRIVATE_SETTINGS.add(RECENTS_OMNI_SWITCH_ENABLED);
+			PRIVATE_SETTINGS.add(SPLITSCREEN_FORCE_SYSTEMBAR_ENABLED);
         }
 
         /**
