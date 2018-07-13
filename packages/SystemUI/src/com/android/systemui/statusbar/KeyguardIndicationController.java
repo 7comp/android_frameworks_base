@@ -38,6 +38,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.graphics.Typeface;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.app.IBatteryStats;
@@ -347,17 +348,22 @@ public class KeyguardIndicationController implements
                     int showAmbientBottomInfo = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.AMBIENT_BOTTOM_DISPLAY, 0, UserHandle.USER_CURRENT);
                     if (showAmbientBottomInfo == AMBIENT_BOTTOM_DISPLAY_BATTERYPERCENT) {
-                        String bolt = "\u26A1\uFE0E";
+                        String bolt = "\u26A1";
                         CharSequence chargeIndicator = (mPowerPluggedIn ? (bolt + " ") : "") +
                                 NumberFormat.getPercentInstance().format(mLevel / 100f);
+                        mTextView.setTextColor(Color.GREEN);
+                        mTextView.setTextSize(14);
+                        mTextView.setTypeface(mTextView.getTypeface(), Typeface.ITALIC);
                         mTextView.switchIndication(chargeIndicator);
-                        mTextView.setTextColor(Color.WHITE);
                     } else if (showAmbientBottomInfo == AMBIENT_BOTTOM_DISPLAY_WEATHER){
                         if (mWeatherEnabled && !mPowerPluggedIn) {
-                            CharSequence weatherIndicator = String.format(mContext.getResources().getString(R.string.ambient_weather_info),
+                            String weatherIcon = "\u26C5";
+                            CharSequence weatherIndicator = weatherIcon + "\n" +String.format(mContext.getResources().getString(R.string.ambient_weather_info), 
                                   mWeatherCurrentTemp, mWeatherConditionText);
+                            mTextView.setTextColor(Color.WHITE);
+                            mTextView.setTextSize(14);
+                            mTextView.setTypeface(mTextView.getTypeface(), Typeface.ITALIC);
                             mTextView.switchIndication(weatherIndicator);
-							mTextView.setTextColor(Color.WHITE);
                         }
                     } else {
                         mTextView.switchIndication(null);
