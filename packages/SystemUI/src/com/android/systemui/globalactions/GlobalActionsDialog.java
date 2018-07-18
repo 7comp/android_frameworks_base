@@ -360,11 +360,11 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
      */
     private ActionsDialog createDialog() {
         // Simple toggle style if there's no vibrator, otherwise use a tri-state
-        if (!mHasVibrator) {
+//        if (!mHasVibrator) {
             mSilentModeAction = new SilentModeToggleAction();
-        } else {
-            mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
-        }
+//        } else {
+//            mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
+//        }
         mAirplaneModeOn = new ToggleAction(
                 R.drawable.ic_lock_airplane_mode,
                 R.drawable.ic_lock_airplane_mode_off,
@@ -1046,12 +1046,12 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
     }
 
     private void refreshSilentMode() {
-        if (!mHasVibrator) {
+//        if (!mHasVibrator) {
             final boolean silentModeOn =
                     mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
             ((ToggleAction) mSilentModeAction).updateState(
                     silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off);
-        }
+//        }
     }
 
     /** {@inheritDoc} */
@@ -1507,9 +1507,11 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
 
     private class SilentModeToggleAction extends ToggleAction {
         public SilentModeToggleAction() {
-            super(R.drawable.ic_audio_vol_mute,
-                    R.drawable.ic_audio_vol,
-                    R.string.global_action_toggle_silent_mode);
+            super(com.android.systemui.R.drawable.ic_lock_silent_mode_disabled,
+                    com.android.systemui.R.drawable.ic_lock_silent_mode_enabled,
+                    R.string.global_action_toggle_silent_mode,
+                    R.string.global_action_silent_mode_on_status,
+                    R.string.global_action_silent_mode_off_status);
         }
 
         void onToggle(boolean on) {
