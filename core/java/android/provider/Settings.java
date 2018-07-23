@@ -5104,13 +5104,6 @@ public final class Settings {
         public static final String LOCK_SCREEN_WEATHER_CONDITION_ICON = "lock_screen_weather_condition_icon";
 
         /**
-         * Whether to enable three finger gesture screenshot
-         * @hide
-         */
-
-        public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
-
-        /**
          * Quick Settings Smart Pulldown
          * @hide
          */
