@@ -201,6 +201,7 @@ import com.android.systemui.SystemUI;
 import com.android.systemui.SystemUIFactory;
 import com.android.systemui.UiOffloadThread;
 import com.android.systemui.ambientmusic.AmbientIndicationContainer;
+import com.google.android.systemui.ambientmusic.AmbientIndicationContainerPlay;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.classifier.FalsingLog;
 import com.android.systemui.classifier.FalsingManager;
@@ -988,6 +989,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private HashMap<String, Entry> mPendingNotifications = new HashMap<>();
     private boolean mClearAllEnabled;
     @Nullable private View mAmbientIndicationContainer;
+    @Nullable private View mAmbientIndicationContainerPlay;
     private String mKeyToRemoveOnGutsClosed;
     private SysuiColorExtractor mColorExtractor;
     private ForegroundServiceController mForegroundServiceController;
@@ -1407,6 +1409,12 @@ public class StatusBar extends SystemUI implements DemoMode,
                 R.id.ambient_indication_container);
         if (mAmbientIndicationContainer != null) {
             ((AmbientIndicationContainer) mAmbientIndicationContainer).initializeView(this, mHandler);
+        }
+
+        mAmbientIndicationContainerPlay = mStatusBarWindow.findViewById(
+            R.id.ambient_indication_container_play);
+        if (mAmbientIndicationContainerPlay != null) {
+                      ((AmbientIndicationContainerPlay) mAmbientIndicationContainerPlay).initializeView(this);
         }
 
         // set the initial view visibility
