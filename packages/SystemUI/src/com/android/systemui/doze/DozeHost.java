@@ -51,7 +51,6 @@ public interface DozeHost {
         default void onNotificationHeadsUp() {}
         default void onNotificationMedia() {}
         default void onPowerSaveChanged(boolean active) {}
-        default void wakeUpFromDoubleTapAod() {}
     }
 
     interface PulseCallback {
