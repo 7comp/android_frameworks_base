@@ -520,9 +520,10 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
                 //    mItems.add(new BugReportAction());
                 //}
             } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
-                //if (mShowSilentToggle) {
-                //    mItems.add(mSilentModeAction);
-                //}
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SILENT, 0) != 0) {
+                    mItems.add(mSilentModeAction);
+                }
             } else if (GLOBAL_ACTION_KEY_USERS.equals(actionKey)) {
                 //if (SystemProperties.getBoolean("fw.power_user_switcher", false)) {
                 //    addUsersToMenu(mItems);
@@ -1509,9 +1510,7 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
         public SilentModeToggleAction() {
             super(com.android.systemui.R.drawable.ic_lock_silent_mode_disabled,
                     com.android.systemui.R.drawable.ic_lock_silent_mode_enabled,
-                    R.string.global_action_toggle_silent_mode,
-                    R.string.global_action_silent_mode_on_status,
-                    R.string.global_action_silent_mode_off_status);
+                    R.string.global_action_toggle_silent_mode);
         }
 
         void onToggle(boolean on) {

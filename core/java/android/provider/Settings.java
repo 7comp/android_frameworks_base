@@ -4156,6 +4156,13 @@ public final class Settings {
          */
         public static final String POWERMENU_FLASHLIGHT = "powermenu_flashlight";
 
+        /**
+         * Whether to display the silent mode toggle in the power menu
+         *
+         * @hide
+         */
+        public static final String POWERMENU_SILENT = "powermenu_silent";
+
 
         /**
          * Enable blocking wakelock
