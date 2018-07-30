@@ -132,4 +132,7 @@
     <bool name="config_haveHigherAspectRatioScreen">false</bool>
     <!-- Aspect ratio of screen -->
     <item name="config_screenAspectRatio" format="float" type="dimen">2.1</item>
+
+    <!-- Proximity check timeout for flashlight -->
+    <integer name="config_flashlightProximityTimeout">300</integer>
 </resources>
