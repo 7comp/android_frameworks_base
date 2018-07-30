@@ -58,6 +58,7 @@ import android.view.ViewGroup;
 import android.widget.CustomAnalogClock;
 import android.widget.CustomAnalogNumClock;
 import android.widget.DeadPoolAnalogClock;
+import android.widget.DotAnalogClock;
 import android.widget.SpideyAnalogClock;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -89,6 +90,7 @@ public class KeyguardStatusView extends GridLayout implements
     private CustomAnalogClock mAnalogClockView;
     private CustomAnalogNumClock mAnalogClockNumView;
     private DeadPoolAnalogClock mDeadPoolClockView;
+    private DotAnalogClock mDotClockView;	
     private SpideyAnalogClock mSpideyClockView;
     private TextClock mClockView;
     private TextView mOwnerInfo;
@@ -224,13 +226,14 @@ public class KeyguardStatusView extends GridLayout implements
         mAnalogClockView = findViewById(R.id.analog_clock_view);
         mAnalogClockNumView = findViewById(R.id.analog_clock_num_view);
         mDeadPoolClockView = findViewById(R.id.deadpool_clock_view);
+        mDotClockView = findViewById(R.id.dot_clock_view);
         mSpideyClockView = findViewById(R.id.spidey_clock_view);
         mClockView = findViewById(R.id.clock_view);
         mClockView.setShowCurrentUserTime(true);
         mOwnerInfo = findViewById(R.id.owner_info);
         //mBatteryDoze = findViewById(R.id.battery_doze);
         mKeyguardStatusArea = findViewById(R.id.keyguard_status_area);
-        mVisibleInDoze = new View[]{/*mBatteryDoze, */mClockView, mAnalogClockView, mAnalogClockNumView, mDeadPoolClockView, mSpideyClockView, mKeyguardStatusArea};
+        mVisibleInDoze = new View[]{/*mBatteryDoze, */mClockView, mAnalogClockView, mAnalogClockNumView, mDeadPoolClockView, mDotClockView, mSpideyClockView, mKeyguardStatusArea};
         mTextColor = mClockView.getCurrentTextColor();
         mDateTextColor = mDateView.getCurrentTextColor();
         mAlarmTextColor = mAlarmStatusView.getCurrentTextColor();
@@ -282,7 +285,12 @@ public class KeyguardStatusView extends GridLayout implements
         deadpoollayoutParams.bottomMargin = getResources().getDimensionPixelSize(
                 R.dimen.bottom_text_spacing_digital);
         mDeadPoolClockView.setLayoutParams(deadpoollayoutParams);
-
+		
+		// DotOS analog clock
+        MarginLayoutParams dotlayoutParams = (MarginLayoutParams) mDotClockView.getLayoutParams();
+        dotlayoutParams.bottomMargin = getResources().getDimensionPixelSize(
+                R.dimen.bottom_text_spacing_digital);
+        mDotClockView.setLayoutParams(dotlayoutParams);
         // Spidey analog clock
         MarginLayoutParams spideylayoutParams = (MarginLayoutParams) mSpideyClockView.getLayoutParams();
         spideylayoutParams.bottomMargin = getResources().getDimensionPixelSize(
@@ -494,6 +502,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mClockView.setGravity(Gravity.CENTER);
                 mAnalogClockView.unregisterReceiver();
                 mDeadPoolClockView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 mSpideyClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
                 break;
@@ -505,6 +514,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mClockView.setGravity(Gravity.CENTER);
                 mAnalogClockView.unregisterReceiver();
                 mDeadPoolClockView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 mSpideyClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
                 break;
@@ -513,6 +523,7 @@ public class KeyguardStatusView extends GridLayout implements
                 paramsWeather.addRule(RelativeLayout.BELOW, R.id.analog_clock_view);
                 mAnalogClockView.registerReceiver();
                 mDeadPoolClockView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 mSpideyClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
                 break;
@@ -523,6 +534,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mAnalogClockNumView.registerReceiver();
                 mDeadPoolClockView.unregisterReceiver();
                 mSpideyClockView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 break;
             case 5: // analog (deadpool)
                 params.addRule(RelativeLayout.BELOW, R.id.deadpool_clock_view);
@@ -531,12 +543,23 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.registerReceiver();
                 mSpideyClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 break;
             case 6: //analog (spidey)
                 params.addRule(RelativeLayout.BELOW, R.id.spidey_clock_view);
                 paramsWeather.addRule(RelativeLayout.BELOW, R.id.spidey_clock_view);
                 mAnalogClockView.unregisterReceiver();
                 mSpideyClockView.registerReceiver();
+                mDeadPoolClockView.unregisterReceiver();
+                mAnalogClockNumView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
+                break;
+            case 9: //analog (dot)
+                params.addRule(RelativeLayout.BELOW, R.id.dot_clock_view);
+                paramsWeather.addRule(RelativeLayout.BELOW, R.id.dot_clock_view);
+				mDotClockView.registerReceiver();
+                mAnalogClockView.unregisterReceiver();
+                mSpideyClockView.unregisterReceiver();
                 mDeadPoolClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
                 break;
@@ -550,6 +573,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.unregisterReceiver();
                 mSpideyClockView.unregisterReceiver();
                 mAnalogClockNumView.unregisterReceiver();
+				mDotClockView.unregisterReceiver();
                 break;
 
         }
@@ -685,6 +709,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
             case 1: // digital (bold)
             case 2: // digital (small)
@@ -694,6 +719,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
             case 3: // analog
                 mAnalogClockView.setVisibility(mShowClock ?
@@ -702,6 +728,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
             case 4: // analog with numbers
                 mAnalogClockNumView.setVisibility(mShowClock ?
@@ -710,6 +737,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mAnalogClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
             case 5: // analog (deadpool)
                 mDeadPoolClockView.setVisibility(mShowClock ?
@@ -718,6 +746,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
             case 6: // analog (spidey)
                 mSpideyClockView.setVisibility(mShowClock ?
@@ -726,6 +755,16 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+                mDotClockView.setVisibility(View.GONE);
+                break;
+            case 9: // analog (dot)
+                mDotClockView.setVisibility(mShowClock ?
+                                (forceHide ? View.GONE : View.VISIBLE) : View.GONE);
+                mAnalogClockView.setVisibility(View.GONE);
+                mDeadPoolClockView.setVisibility(View.GONE);
+                mClockView.setVisibility(View.GONE);
+                mAnalogClockNumView.setVisibility(View.GONE);
+				mSpideyClockView.setVisibility(View.GONE);
                 break;
             case 7: // sammy
             case 8: // sammy (bold)
@@ -735,6 +774,7 @@ public class KeyguardStatusView extends GridLayout implements
                 mDeadPoolClockView.setVisibility(View.GONE);
                 mSpideyClockView.setVisibility(View.GONE);
                 mAnalogClockNumView.setVisibility(View.GONE);
+				mDotClockView.setVisibility(View.GONE);
                 break;
         }
 
@@ -828,6 +868,7 @@ public class KeyguardStatusView extends GridLayout implements
         mAnalogClockView.setDark(dark);
         mAnalogClockNumView.setDark(dark);
         mDeadPoolClockView.setDark(dark);
+        mDotClockView.setDark(dark);
         mSpideyClockView.setDark(dark);
         updateClockVisibilities(false); // with updated mDarkAmount value
     }

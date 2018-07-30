@@ -259,6 +259,12 @@
   <java-symbol type="drawable" name="spidey_clock_hand_hour" />
   <java-symbol type="drawable" name="spidey_clock_hand_minute" />
 
+   <!-- DotOS Analog clock -->
+   <java-symbol type="drawable" name="dot_clock_dial" />
+   <java-symbol type="drawable" name="dot_clock_dial_ambient" />
+   <java-symbol type="drawable" name="dot_clock_hand_hour" />
+   <java-symbol type="drawable" name="dot_clock_hand_minute" />
+
   <!-- Pocket bridge -->
   <java-symbol type="string" name="config_pocketBridgeSysfsInpocket" />
 
