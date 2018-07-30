@@ -6,6 +6,6 @@
     android:viewportHeight="512">
 
     <path
-        android:fillColor="#F4F4F4"
+        android:fillColor="@color/analog_clock_hand_hour_color"
         android:pathData="M254,273L254,273c-5,0-9-4-9-9V121.9c0-4.9,4.1-9,9-9h0c4.9,0,9,4,9,9V264C263,269,259,273,254,273z" />
 </vector>
