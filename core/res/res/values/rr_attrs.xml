@@ -56,4 +56,10 @@
         <attr name="dot_hand_minute" format="reference"/>
     </declare-styleable>
 
+	<!-- Spectrum Analog clock -->
+    <declare-styleable name="SpectrumAnalogClock">
+        <attr name="spectrum_dial" format="reference"/>
+        <attr name="spectrum_hand_hour" format="reference"/>
+        <attr name="spectrum_hand_minute" format="reference"/>
+
 </resources>
