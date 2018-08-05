@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 
+import com.android.systemui.Dependency;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.R.id;
@@ -41,8 +42,9 @@ import com.android.systemui.plugins.qs.QS;
 import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
+import com.android.systemui.tuner.TunerService;
 
-public class QSFragment extends Fragment implements QS {
+public class QSFragment extends Fragment implements QS, TunerService.Tunable {
     private static final String TAG = "QS";
     private static final boolean DEBUG = false;
     private static final String EXTRA_EXPANDED = "expanded";
@@ -71,6 +73,13 @@ public class QSFragment extends Fragment implements QS {
 
     // omni additions
     private boolean mSecureExpandDisabled;
+
+    private static boolean mTranslucentQuickSettings;
+    private static int mQSTranslucencyPercentage;
+    private static final String TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY =
+            "system:" + Settings.System.TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY;
+    private static final String TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY =
+            "system:" + Settings.System.TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -107,6 +116,10 @@ public class QSFragment extends Fragment implements QS {
             mQSCustomizer.setEditLocation(x, y);
             mQSCustomizer.restoreInstanceState(savedInstanceState);
         }
+
+        Dependency.get(TunerService.class).addTunable(this,
+                TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY,
+                TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY);
     }
 
     @Override
@@ -114,6 +127,34 @@ public class QSFragment extends Fragment implements QS {
         super.onDestroy();
         if (mListening) {
             setListening(false);
+        }
+        Dependency.get(TunerService.class).removeTunable(this);
+    }
+     @Override
+    public void onTuningChanged(String key, String newValue) {
+        switch (key) {
+            case TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY:
+                mTranslucentQuickSettings =
+                        newValue != null && Integer.parseInt(newValue) == 1;
+                handleQuickSettingsBackround();
+                break;
+            case TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY:
+                int value =
+                        newValue == null ? 60 : Integer.parseInt(newValue);
+                mQSTranslucencyPercentage = 255 - ((value * 255) / 100);
+                handleQuickSettingsBackround();
+                break;
+            default:
+                break;
+        }
+    }
+     private void handleQuickSettingsBackround() {
+        if (mContainer == null)
+            return;
+        if (mKeyguardShowing) {
+            mContainer.getBackground().setAlpha(255);
+        } else {
+            mContainer.getBackground().setAlpha(mTranslucentQuickSettings ? mQSTranslucencyPercentage : 255);
         }
     }
 
@@ -204,6 +245,7 @@ public class QSFragment extends Fragment implements QS {
         mFooter.setExpanded((mKeyguardShowing && !mHeaderAnimating)
                 || (mQsExpanded && !mStackScrollerOverscrolling));
         mQSPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
+        handleQuickSettingsBackround();
     }
 
     public QSPanel getQsPanel() {
