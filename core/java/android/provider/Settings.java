@@ -4037,6 +4037,12 @@ public final class Settings {
         public static final String TRANSLUCENT_NOTIFICATIONS_PREFERENCE_KEY = "translucent_notifications_pref";
 
         /** @hide */
+        public static final String BLUR_VOLUMEDIALOG_ENABLED = "blur_volumedialog_enabled";
+
+        /** @hide */
+        public static final String BLUR_VOLUMEDIALOG_PERCENTAGE = "blur_volumedialog_percentage";
+
+        /** @hide */
         public static final String RECENT_APPS_ENABLED_PREFERENCE_KEY = "blurred_recent_app_enabled_pref";
 
         /** @hide */
