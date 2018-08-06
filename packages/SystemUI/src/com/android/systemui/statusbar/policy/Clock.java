@@ -409,6 +409,19 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
 
         SpannableStringBuilder formatted = new SpannableStringBuilder(result);
 
+        if (mDateSizeSmall) {
+            if (dateString != null) {
+                int dateStringLen = dateString.length();
+                if (!mShowDate) {
+                    formatted.delete(0, dateStringLen);
+                } else {
+                    CharacterStyle style = new RelativeSizeSpan(0.7f);
+                    formatted.setSpan(style, 0, dateStringLen,
+                                      Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                }
+            }
+        }
+
         if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
             int magic1 = result.indexOf(MAGIC1);
             int magic2 = result.indexOf(MAGIC2);
@@ -423,19 +436,6 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                     }
                     formatted.delete(magic2, magic2 + 1);
                     formatted.delete(magic1, magic1 + 1);
-                }
-            }
-        }
-
-        if (mDateSizeSmall) {
-            if (dateString != null) {
-                int dateStringLen = dateString.length();
-                if (!mShowDate) {
-                    formatted.delete(0, dateStringLen);
-                } else {
-                    CharacterStyle style = new RelativeSizeSpan(0.7f);
-                    formatted.setSpan(style, 0, dateStringLen,
-                                      Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                 }
             }
         }
