@@ -351,16 +351,16 @@ public class KeyguardIndicationController implements
                         String bolt = "\u26A1";
                         CharSequence chargeIndicator = (mPowerPluggedIn ? (bolt + " ") : "") +
                                 NumberFormat.getPercentInstance().format(mLevel / 100f);
-                        mTextView.setTextColor(Color.GREEN);
+                        mTextView.setTextColor(Color.WHITE);
                         mTextView.setTextSize(14);
                         mTextView.setTypeface(mTextView.getTypeface(), Typeface.ITALIC);
                         mTextView.switchIndication(chargeIndicator);
                     } else if (showAmbientBottomInfo == AMBIENT_BOTTOM_DISPLAY_WEATHER){
                         if (mWeatherEnabled && !mPowerPluggedIn) {
-                            String weatherIcon = "\u26C5\uFE0E";
+                            String weatherIcon = "\u26C5";
                             CharSequence weatherIndicator = weatherIcon + "\n" +String.format(mContext.getResources().getString(R.string.ambient_weather_info), 
                                   mWeatherCurrentTemp, mWeatherConditionText);
-                            mTextView.setTextColor(Color.WHITE);
+                            mTextView.setTextColor(Color.GREEN);
                             mTextView.setTextSize(14);
                             mTextView.setTypeface(mTextView.getTypeface(), Typeface.ITALIC);
                             mTextView.switchIndication(weatherIndicator);
