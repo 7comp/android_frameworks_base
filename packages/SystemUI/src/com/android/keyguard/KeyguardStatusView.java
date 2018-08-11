@@ -75,6 +75,7 @@ import com.android.settingslib.Utils;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.omni.OmniJawsClient;
 import com.android.systemui.statusbar.policy.DateView;
+import java.lang.Math;
 
 import java.util.Locale;
 
@@ -292,11 +293,12 @@ public class KeyguardStatusView extends GridLayout implements
                 R.dimen.bottom_text_spacing_digital);
         mDeadPoolClockView.setLayoutParams(deadpoollayoutParams);
 		
-		// DotOS analog clock
+        // DotOS analog clock
         MarginLayoutParams dotlayoutParams = (MarginLayoutParams) mDotClockView.getLayoutParams();
         dotlayoutParams.bottomMargin = getResources().getDimensionPixelSize(
                 R.dimen.bottom_text_spacing_digital);
         mDotClockView.setLayoutParams(dotlayoutParams);
+
         // Spidey analog clock
         MarginLayoutParams spideylayoutParams = (MarginLayoutParams) mSpideyClockView.getLayoutParams();
         spideylayoutParams.bottomMargin = getResources().getDimensionPixelSize(
@@ -309,7 +311,7 @@ public class KeyguardStatusView extends GridLayout implements
                 R.dimen.bottom_text_spacing_digital);
         mSpectrumClockView.setLayoutParams(spectrumlayoutParams);
 
-		// Sneeky analog clock
+        // Sneeky analog clock
         MarginLayoutParams sneekylayoutParams = (MarginLayoutParams) mSneekyClockView.getLayoutParams();
         sneekylayoutParams.bottomMargin = getResources().getDimensionPixelSize(
                 R.dimen.bottom_text_spacing_digital);
@@ -340,9 +342,15 @@ public class KeyguardStatusView extends GridLayout implements
         } else if (mClockSelection == 2) {
 	    mClockView.setFormat12Hour(Html.fromHtml("<strong>h:mm</strong>"));
             mClockView.setFormat24Hour(Html.fromHtml("<strong>kk:mm</strong>"));
-        } else if (mClockSelection == 6) {
+        } else if (mClockSelection == 8) {
             mClockView.setFormat12Hour(Html.fromHtml("<strong>h</strong><br>mm"));
             mClockView.setFormat24Hour(Html.fromHtml("<strong>kk</strong><br>mm"));
+        } else if (mClockSelection == 12) {
+            mClockView.setFormat12Hour(Html.fromHtml("h<br><font color=" + getResources().getColor(R.color.sammy_minutes_accent) + ">mm</font>"));
+            mClockView.setFormat24Hour(Html.fromHtml("kk<br><font color=" + getResources().getColor(R.color.sammy_minutes_accent) + ">mm</font>"));
+        } else if (mClockSelection == 13) {
+            mClockView.setFormat12Hour(Html.fromHtml("<font color='#454545'>h</font><br><font color=" + getResources().getColor(R.color.sammy_minutes_accent) + ">mm</font>"));
+            mClockView.setFormat24Hour(Html.fromHtml("<font color='#454545'>kk</font><br><font color=" + getResources().getColor(R.color.sammy_minutes_accent) + ">mm</font>"));
         } else {
             mClockView.setFormat12Hour("h\nmm");
             mClockView.setFormat24Hour("kk\nmm");
@@ -630,7 +638,20 @@ public class KeyguardStatusView extends GridLayout implements
                 mSpectrumClockView.unregisterReceiver();
                 mSneekyClockView.unregisterReceiver();
                 break;
-
+            case 12: // sammy accent 
+            case 13: // sammy accent (alt) 
+                params.addRule(RelativeLayout.BELOW, R.id.clock_view);
+                paramsWeather.addRule(RelativeLayout.BELOW, R.id.clock_view);
+                mClockView.setSingleLine(false);
+                mClockView.setGravity(Gravity.CENTER);
+                mAnalogClockView.unregisterReceiver();
+                mDeadPoolClockView.unregisterReceiver();
+                mSpideyClockView.unregisterReceiver();
+                mAnalogClockNumView.unregisterReceiver();
+                mDotClockView.unregisterReceiver();
+                mSpectrumClockView.unregisterReceiver();
+                mSneekyClockView.unregisterReceiver();
+                break; 
         }
 
         switch (mDateSelection) {
@@ -923,6 +944,20 @@ public class KeyguardStatusView extends GridLayout implements
                 mSpectrumClockView.setVisibility(View.GONE);
                 mSneekyClockView.setVisibility(View.GONE);
                 break;
+            case 12: // sammy accent 
+            case 13: // sammy accent (alt)
+                mClockView.setVisibility(mShowClock ?
+                                (forceHide ? View.GONE : View.VISIBLE) : View.GONE);
+                mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX, 
+                getResources().getDimensionPixelSize(R.dimen.widget_sammy_accent_font_size)); 
+                mAnalogClockView.setVisibility(View.GONE);
+                mDeadPoolClockView.setVisibility(View.GONE);
+                mSpideyClockView.setVisibility(View.GONE);
+                mAnalogClockNumView.setVisibility(View.GONE);
+                mDotClockView.setVisibility(View.GONE);
+                mSpectrumClockView.setVisibility(View.GONE);
+                mSneekyClockView.setVisibility(View.GONE);
+                break;
         }
 
         mDateView.setVisibility(mShowDate ?
@@ -1018,7 +1053,7 @@ public class KeyguardStatusView extends GridLayout implements
         mDotClockView.setDark(dark);
         mSpectrumClockView.setDark(dark);
         mSpideyClockView.setDark(dark);
-		mSneekyClockView.setDark(dark);
+        mSneekyClockView.setDark(dark);
         updateClockVisibilities(false); // with updated mDarkAmount value
     }
 

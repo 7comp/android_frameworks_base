@@ -21,4 +21,7 @@
     <!-- Default clock parameters -->
     <dimen name="bottom_text_spacing_analog">14dp</dimen>
 
+    <!-- Our custom clock values -->
+    <dimen name="widget_sammy_accent_font_size">80dp</dimen>
+
 </resources>
